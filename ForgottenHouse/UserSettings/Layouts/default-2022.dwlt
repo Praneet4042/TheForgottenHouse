@@ -417,7 +417,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 22fbffff
+      m_ExpandedIDs: 12f6ffff62f6ffffe4f6ffffccf9ffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -849,9 +849,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0, y: 0, z: 0}
+    m_Target: {x: 15.623451, y: 2.8893495, z: -5.4445515}
     speed: 2
-    m_Value: {x: 0, y: 0, z: 0}
+    m_Value: {x: 15.623451, y: 2.8893495, z: -5.4445515}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -897,13 +897,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Target: {x: 0.016865056, y: 0.98276204, z: -0.14311586, w: 0.11581054}
     speed: 2
-    m_Value: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+    m_Value: {x: 0.017551817, y: 0.9821949, z: -0.14303328, w: 0.120526455}
   m_Size:
-    m_Target: 10
+    m_Target: 9.12025
     speed: 2
-    m_Value: 9.899159
+    m_Value: 9.55
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -983,14 +983,14 @@ MonoBehaviour:
   m_LastFolders:
   - Assets/Scenes
   m_LastFoldersGridSize: -1
-  m_LastProjectPath: D:\GIT\ForgottenHouse\ForgottenHouse
+  m_LastProjectPath: C:\GameJam\ForgottenHouse\ForgottenHouse
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 605b0000
-    m_LastClickedID: 23392
-    m_ExpandedIDs: 00000000565b0000
+    m_SelectedIDs: ee1f0000
+    m_LastClickedID: 8174
+    m_ExpandedIDs: 00000000be5b000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1018,7 +1018,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000565b0000
+    m_ExpandedIDs: 00000000be5b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1045,7 +1045,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c62300005aaa0000e6ab000066cc0000ba020000165d00004a5d000000000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
