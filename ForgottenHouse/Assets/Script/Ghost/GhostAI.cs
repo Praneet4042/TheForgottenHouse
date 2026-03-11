@@ -4,23 +4,44 @@ using UnityEngine.AI;
 public class GhostAI : MonoBehaviour
 {
     public Transform[] waypoints;
+    public float chaseSpeed = 8f;
+    public float roamSpeed = 3f;
+
     NavMeshAgent agent;
+    Transform player;
+    int currentWaypoint = 0;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        GoToNextWaypoint();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        agent.speed = roamSpeed;
+        GoToNextWaypoint(); // start roaming immediately
     }
 
     void Update()
     {
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
-            GoToNextWaypoint();
+        bool lanternOn = LanternToggle.instance.isOn;
+
+        if (lanternOn)
+        {
+            // Lantern ON = danger, ghost chases
+            agent.speed = chaseSpeed;
+            agent.SetDestination(player.position);
+        }
+        else
+        {
+            // Lantern OFF = safe, ghost roams
+            agent.speed = roamSpeed;
+            if (!agent.pathPending && agent.remainingDistance < 0.5f)
+                GoToNextWaypoint();
+        }
     }
 
     void GoToNextWaypoint()
     {
         if (waypoints.Length == 0) return;
-        agent.SetDestination(waypoints[Random.Range(0, waypoints.Length)].position);
+        agent.SetDestination(waypoints[currentWaypoint].position);
+        currentWaypoint = (currentWaypoint + 1) % waypoints.Length;
     }
 }

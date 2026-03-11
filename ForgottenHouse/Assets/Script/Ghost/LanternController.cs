@@ -1,9 +1,11 @@
 using UnityEngine;
-public class LanternToggle : MonoBehaviour
+
+public class LanternController : MonoBehaviour
 {
-    public static LanternToggle instance;
+    public static LanternController instance;
     public Light lanternLight;
     public bool isOn = false;
+    public KeyCode toggleKey = KeyCode.T;
 
     void Awake()
     {
@@ -14,7 +16,7 @@ public class LanternToggle : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(toggleKey))
         {
             isOn = !isOn;
             lanternLight.enabled = isOn;
