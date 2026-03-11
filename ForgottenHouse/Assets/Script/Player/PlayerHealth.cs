@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     public float ghostProximityDrainRate = 10f;
     public float killRadius = 5f;
     public bool isInvincible = false;
+    public Slider healthBar;
     bool dead = false;
     Transform ghost;
 
@@ -26,34 +28,25 @@ public class PlayerHealth : MonoBehaviour
     void Update()
     {
         if (dead || isInvincible) return;
-
-        // Constant health drain
         currentHealth -= drainRate * Time.deltaTime;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        UpdateHealthBar(); // ADD THIS LINE
 
-        // Extra drain when ghost is nearby
-        if (ghost != null)
+        if (ghost != null && LanternToggle.instance.isOn)
         {
             float dist = Vector3.Distance(transform.position, ghost.position);
-
-            // Kill player when lantern ON and ghost very close
-            if (LanternToggle.instance.isOn && dist <= killRadius)
+            if (dist <= killRadius)
             {
                 Die("The ghost got you...");
                 return;
             }
-
-            // Extra drain when ghost nearby regardless of lantern
-            if (dist <= ghostProximityRadius)
-            {
-                float extra = Mathf.Lerp(ghostProximityDrainRate, 0f,
-                    dist / ghostProximityRadius);
-                currentHealth -= extra * Time.deltaTime;
-            }
         }
-
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-
         if (currentHealth <= 0) Die("You ran out of time...");
+    }
+    void UpdateHealthBar()
+    {
+        if (healthBar != null)
+            healthBar.value = currentHealth;
     }
 
     public void TakeDamage(float amt)
