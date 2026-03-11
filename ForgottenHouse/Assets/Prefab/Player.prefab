@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4318979665126206303}
   - component: {fileID: 982744017152013441}
   - component: {fileID: 3782931949481908243}
-  - component: {fileID: 2643074883211929330}
   - component: {fileID: 92491321614323879}
   - component: {fileID: 2697113910202240422}
   - component: {fileID: 9012090434545230445}
@@ -89,29 +88,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &2643074883211929330
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 520771161846036623}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &92491321614323879
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -177,7 +153,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e0875126e474514984f2e803a78c2d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  walkSpeed: 4
+  runSpeed: 7
+  jumpForce: 6
+  gravity: -20
   mouseSensitivity: 100
   camHolder: {fileID: 8765265604844524286}
 --- !u!1 &2431975227203679354
