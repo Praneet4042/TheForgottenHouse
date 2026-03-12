@@ -4,8 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+
 public class FuseBoxMinigame : MonoBehaviour
 {
+    [Header("Trigger")]
+    public FuseBoxInteract interactTrigger;
+
     [Header("UI")]
     public GameObject minigamePanel;
     public Button[] fuseButtons;
@@ -101,7 +105,9 @@ public class FuseBoxMinigame : MonoBehaviour
     {
         _accepting = false;
         SetButtonsInteractable(false);
-        resultText.text = "✗ Wrong! Try Again...";
+        Debug.Log("FAIL triggered"); // ADD THIS
+        Debug.Log("ResultText is: " + (resultText == null ? "NULL" : "OK")); // ADD THIS
+        resultText.text = "The sequence fails. Try again.";
         resultText.color = Color.red;
         yield return new WaitForSeconds(1.5f);
         resultText.text = "";
@@ -112,9 +118,11 @@ public class FuseBoxMinigame : MonoBehaviour
     {
         _accepting = false;
         SetButtonsInteractable(false);
-        resultText.text = "✓ Fuses aligned. Something stirs.";
+        resultText.text = "Fuses aligned. Something stirs.";
         resultText.color = Color.green;
         yield return new WaitForSeconds(1.5f);
+        TaskManager.Instance?.TaskCompleted();
+        interactTrigger?.SetCompleted(); // ADD THIS
         MinigameManager.Instance.EndMinigame(minigamePanel);
     }
 }

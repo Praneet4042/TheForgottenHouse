@@ -3,6 +3,13 @@ using UnityEngine.AI;
 
 public class GhostAI : MonoBehaviour
 {
+    private bool _aiActive = true;
+
+    public void SetActive(bool value)
+    {
+        _aiActive = value;
+        GetComponent<UnityEngine.AI.NavMeshAgent>().isStopped = !value;
+    }
     public Transform[] waypoints;
     public float chaseSpeed = 8f;
     public float roamSpeed = 3f;
@@ -21,6 +28,7 @@ public class GhostAI : MonoBehaviour
 
     void Update()
     {
+        if (!_aiActive) return;
         bool lanternOn = LanternToggle.instance.isOn;
 
         if (lanternOn)
