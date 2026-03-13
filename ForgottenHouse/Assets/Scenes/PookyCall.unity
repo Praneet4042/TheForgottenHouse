@@ -2982,9 +2982,9 @@ MonoBehaviour:
   playerObject: {fileID: 68383640}
   voiceAudioSource: {fileID: 1583200784}
   ambienceAudioSource: {fileID: 1583200783}
-  mainCallClip: {fileID: 0}
-  hintCallClip: {fileID: 0}
-  staticClip: {fileID: 0}
+  mainCallClip: {fileID: 8300000, guid: 3f10f573269594b4c9f5b71e42fa7a7f, type: 3}
+  hintCallClip: {fileID: 8300000, guid: 45cfa844ce4f65241af1440f3a1df485, type: 3}
+  staticClip: {fileID: 8300000, guid: 3f667cbaac1fba6498e0d4c30a620498, type: 3}
   callOverlayUI: {fileID: 188121286}
   subtitleText: {fileID: 2078897360}
   keypadUI: {fileID: 994693745}
@@ -3006,7 +3006,7 @@ MonoBehaviour:
   interactRange: 2.5
   player: {fileID: 68383642}
   audioSource: {fileID: 1583200784}
-  ringClip: {fileID: 0}
+  ringClip: {fileID: 8300000, guid: 36ad332251ec4ee43acda4c8a54e56f4, type: 3}
   promptUI: {fileID: 1332216627}
   promptText: {fileID: 86727922}
   callManager: {fileID: 1583200781}
@@ -3708,14 +3708,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.119551405, g: 0.7283019, b: 0.1634385, a: 1}
+  m_Color: {r: 0.78113204, g: 0.77671057, b: 0.77671057, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 4ce0634a6bcefab4c8b2dd9468b7a46a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

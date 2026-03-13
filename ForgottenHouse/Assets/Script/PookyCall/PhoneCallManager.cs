@@ -47,33 +47,31 @@ public class PhoneCallManager : MonoBehaviour
     // ── Subtitle script shown during main call ──
     private readonly (string text, float duration)[] mainCallSubtitles = new (string, float)[]
     {
-        ("...",                                              0.8f),
-        ("*static crackle*",                                1.2f),
-        ("...hello?",                                       1.5f),
-        ("*soft crying*",                                   2.0f),
-        ("They won't let me go...",                         2.5f),
-        ("...but I can help you.",                          2.0f),
-        ("Your code to escape is...",                       2.2f),
-        ("1  4  _  _  1  4",                                3.5f),
-        ("Remember... one, four... then the secret...",     2.5f),
-        ("...then one, four again.",                        2.5f),
-        ("*whispering* listen carefully for the secret...", 2.0f),
-        ("*line crackles*",                                 1.0f),
+        ("...hello?", 1.0f),
+        ("please... please help me...", 2.8f),
+        ("i've been here so long... it's so dark...", 2.5f),
+        ("they said... they said if someone escapes... i can go home...", 4.9f),
+        ("please... you have to remember this...", 3.2f),
+        ("one... four...", 2.5f),
+        ("[beep]", 2.8f),
+        ("then one... four... again...", 4.5f),
+        ("no... NO... i have to go...", 3.9f),
+        ("remember... one four... [beep] one four...", 6f),
     };
 
     // ── Hint subtitles for the secret number (77) ──
     private readonly (string text, float duration)[] hintSubtitles = new (string, float)[]
-    {
-        ("*crying intensifies*",                            1.5f),
-        ("The secret... it's how many days...",             2.5f),
-        ("...in eleven weeks.",                             2.2f),
-        ("Count them... seven days...",                     2.0f),
-        ("...times eleven weeks...",                        2.0f),
-        ("*sobbing* seventy seven...",                      3.0f),
-        ("7  7",                                            2.5f),
-        ("Please... hurry...",                              2.0f),
-        ("*line goes dead*",                                1.5f),
-    };
+        {
+            ("are you still there...?", 1.3f),
+            ("the secret... i scratched it into the wall to remember...", 3.7f),
+            ("how many days... in eleven weeks...", 4.1f),
+            ("seven... fourteen... twenty one...", 4f),
+            ("keep going... seventy... seventy seven...", 4.6f),
+            ("seventy... seven...", 2.5f),
+            ("seven... seven...", 2.0f),
+            (" please get ou...", 2.0f),
+            (" ", 1.3f),
+        };
 
     void Start()
     {
@@ -157,9 +155,15 @@ public class PhoneCallManager : MonoBehaviour
         if (ambienceAudioSource)
         {
             if (staticClip != null)
+            {
                 ambienceAudioSource.clip = staticClip;
+                ambienceAudioSource.loop = true;
+                ambienceAudioSource.Play();
+            }
             else
+            {
                 StartCoroutine(PlayStaticAmbience());
+            }
         }
 
         // 4. Play main call audio + subtitles
