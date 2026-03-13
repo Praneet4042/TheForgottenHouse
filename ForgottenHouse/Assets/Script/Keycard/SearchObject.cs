@@ -30,7 +30,7 @@ public class SearchObject : MonoBehaviour
 
     void Start()
     {
-        _hasKeycard = false;
+        
         _player = GameObject.FindGameObjectWithTag("Player").transform;
         _camera = Camera.main;
         // Setup outline
@@ -87,16 +87,20 @@ public class SearchObject : MonoBehaviour
     {
         _searched = true;
         SetGlow(false);
-        ShowPrompt(false);
+
+        Debug.Log(objectName + " searched. Has keycard: " + _hasKeycard);
+
 
         if (_hasKeycard)
         {
             ShowWorldMessage("You found the keycard!");
             TaskManager.Instance?.TaskCompleted();
             KeycardManager.Instance?.OnKeycardFound();
+            Invoke(nameof(HideMessage), 3f);
         }
         else
         {
+            ShowPrompt(false);
             string msg = emptyMessages[Random.Range(0, emptyMessages.Length)];
             ShowWorldMessage(msg);
             Invoke(nameof(HideMessage), 2f);
@@ -131,6 +135,7 @@ public class SearchObject : MonoBehaviour
 
     public void DisableObject()
     {
+        if (_hasKeycard) return;
         _searched = true;
         SetGlow(false);
         ShowPrompt(false);

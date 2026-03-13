@@ -36,22 +36,61 @@ public class ScaryMazeGame : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip jumpscareSound;
 
-    // private variables
+    [Header("Interact")]
+    public float interactRange = 15f;
+
+    // private
     int currentLevel = 1;
     bool gameActive = false;
     bool jumpscared = false;
+    bool _completed = false;
+    bool _playerInRange = false;
     RectTransform currentGoal;
+    Transform _player;
 
     void Start()
     {
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
         jumpscarePanel.SetActive(false);
         mazeGamePanel.SetActive(false);
-        OnInteract(); // TEMP — remove when connecting to main game
+    }
+
+    void Update()
+    {
+        // Interact trigger
+        if (!_completed && !gameActive &&
+            mazeGamePanel != null && !mazeGamePanel.activeSelf)
+        {
+            if (_player != null)
+            {
+                float dist = Vector3.Distance(
+                    _player.position, transform.position);
+                _playerInRange = dist <= interactRange;
+            }
+
+            if (_playerInRange && Input.GetKeyDown(KeyCode.P))
+                OnInteract();
+        }
+
+        if (jumpscared) return;
+
+        if (gameActive)
+        {
+            MoveDotToMouse();
+            CheckWallHit();
+            CheckGoal();
+        }
+        else
+        {
+            if (mazeGamePanel.activeSelf)
+                CheckMouseOnSpawn();
+        }
     }
 
     public void OnInteract()
     {
         mazeGamePanel.SetActive(true);
+        MinigameManager.Instance.StartMinigame(mazeGamePanel, true);
         StartMaze();
     }
 
@@ -60,19 +99,19 @@ public class ScaryMazeGame : MonoBehaviour
         currentLevel = 1;
         jumpscared = false;
         LoadLevel(1);
-        Cursor.visible = false;
-        gameActive = false; // false until delay is over
+        Cursor.visible = true;
+        gameActive = false;
         StartCoroutine(DelayedStart());
     }
 
     IEnumerator DelayedStart()
     {
-        // dot is FROZEN at spawn
         playerDot.anchoredPosition = new Vector2(-380, 360);
         gameActive = false;
         instructionText.text = "Place your cursor on the blue dot to begin...";
-        yield return null; // just needed to make it a coroutine
+        yield return null;
     }
+
     void LoadLevel(int level)
     {
         level1Maze.SetActive(false);
@@ -100,24 +139,6 @@ public class ScaryMazeGame : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        if (jumpscared) return;
-
-        // only move dot when game is active
-        if (gameActive)
-        {
-            MoveDotToMouse();
-            CheckWallHit();
-            CheckGoal();
-        }
-        else
-        {
-            // game not active — check if mouse reached spawn point
-            CheckMouseOnSpawn();
-        }
-    }
-
     void CheckMouseOnSpawn()
     {
         Vector2 mousePos;
@@ -132,16 +153,14 @@ public class ScaryMazeGame : MonoBehaviour
 
         if (distance < 20f)
         {
-            // mouse is on spawn dot — start!
             gameActive = true;
             instructionText.text = currentLevel == 1 ?
-                "Reach the end — beware of what awaits you" :
+                "Reach the end - beware of what awaits you" :
                 currentLevel == 2 ?
                 "Stay focused. The path gets narrower..." :
                 "STAND BACK AND WATCH...";
         }
     }
-
 
     void MoveDotToMouse()
     {
@@ -166,7 +185,7 @@ public class ScaryMazeGame : MonoBehaviour
         {
             if (dot.Overlaps(GetRect(wall.rectTransform)))
             {
-                TriggerJumpscare();
+                TriggerJumpscareOrRestart();
                 return;
             }
         }
@@ -189,8 +208,6 @@ public class ScaryMazeGame : MonoBehaviour
         instructionText.text = "Level " + (currentLevel + 1) + "...";
         yield return new WaitForSeconds(1.5f);
         LoadLevel(currentLevel + 1);
-
-        // freeze dot at spawn for next level
         playerDot.anchoredPosition = new Vector2(-380, 360);
         gameActive = false;
         instructionText.text = "Place your cursor on the blue dot to begin...";
@@ -200,7 +217,30 @@ public class ScaryMazeGame : MonoBehaviour
     {
         gameActive = false;
         yield return new WaitForSeconds(0.5f);
-        TriggerJumpscare(); // forced jumpscare on level 3 finish
+        TriggerJumpscareOrRestart();
+    }
+
+    void TriggerJumpscareOrRestart()
+    {
+        if (currentLevel == 3)
+        {
+            // Count task regardless of win or fail on level 3
+            if (!_completed)
+            {
+                _completed = true;
+                TaskManager.Instance?.TaskCompleted();
+                Debug.Log("[ScaryMaze] Completed! Task counted.");
+            }
+            TriggerJumpscare();
+        }
+        else
+        {
+            // Silent restart from level 1
+            jumpscared = false;
+            gameActive = false;
+            LoadLevel(1);
+            instructionText.text = "Place your cursor on the blue dot to begin...";
+        }
     }
 
     void TriggerJumpscare()
@@ -229,7 +269,8 @@ public class ScaryMazeGame : MonoBehaviour
         gameActive = false;
         jumpscarePanel.SetActive(false);
         mazeGamePanel.SetActive(false);
-        Cursor.visible = true;
+        Cursor.visible = false;
+        MinigameManager.Instance.EndMinigame(mazeGamePanel);
     }
 
     Rect GetRect(RectTransform rt)
