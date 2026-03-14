@@ -4,29 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// ============================================================
-//  CupGamePuzzle — TEST VERSION
-//  No IInteractable / GameManager / PlayerHealth dependencies
-//  Game starts automatically on Play via the Start button in UI
-//
-//  TO CONVERT TO MAIN GAME VERSION:
-//  1. Add ", IInteractable" to the class declaration          [STEP A]
-//  2. Delete the [Header("TEST")] StartButton field           [STEP B]
-//  3. Delete the Start() method                               [STEP C]
-//  4. Uncomment the OnInteract() method                       [STEP D]
-//  5. Replace PLACEHOLDER_SetInvincible() calls               [STEP E]
-//  6. Replace PLACEHOLDER_ApplyDamage() calls                 [STEP F]
-//  7. Replace PLACEHOLDER_OnPuzzleSolved() call               [STEP G]
-//  8. Replace PLACEHOLDER_ShakeCamera() call                  [STEP H]
-// ============================================================
-
-// [STEP A] — MAIN GAME: change this line to:
-// public class CupGamePuzzle : MonoBehaviour, IInteractable
 public class CupGamePuzzle : MonoBehaviour
 {
-    // ─────────────────────────────────────────────────────────
-    //  INSPECTOR: Panel / Canvas References
-    // ─────────────────────────────────────────────────────────
     [Header("Canvas & Overlay")]
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private Image dimOverlay;
@@ -55,15 +34,6 @@ public class CupGamePuzzle : MonoBehaviour
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private TextMeshProUGUI instructionText;
 
-    // ─────────────────────────────────────────────────────────
-    //  [STEP B] — MAIN GAME: delete this entire Header + field
-    // ─────────────────────────────────────────────────────────
-    [Header("TEST — Auto-start button (delete in main game)")]
-    [SerializeField] private UnityEngine.UI.Button startButton;
-
-    // ─────────────────────────────────────────────────────────
-    //  INSPECTOR: Level Settings
-    // ─────────────────────────────────────────────────────────
     [Header("Level 1 — Easy")]
     [SerializeField] private float level1ShuffleSpeed = 0.6f;
     [SerializeField] private int level1ShuffleCount = 4;
@@ -79,24 +49,18 @@ public class CupGamePuzzle : MonoBehaviour
     [SerializeField] private int level3ShuffleCount = 10;
     [SerializeField] private float level3Damage = 50f;
 
-    // ─────────────────────────────────────────────────────────
-    //  INSPECTOR: Animation Tweaks
-    // ─────────────────────────────────────────────────────────
     [Header("Cup Animation")]
     [SerializeField] private float cupLiftHeight = 120f;
     [SerializeField] private float cupArcHeight = 60f;
     [SerializeField] private float cupRevealHold = 0.8f;
 
-    [Header("Perspective Scaling (fake 3D)")]
+    [Header("Perspective Scaling")]
     [SerializeField] private float backPositionScale = 0.82f;
     [SerializeField] private float backPositionYOffset = -60f;
 
     [Header("Panel Fade")]
     [SerializeField] private float fadeDuration = 0.4f;
 
-    // ─────────────────────────────────────────────────────────
-    //  INSPECTOR: Audio
-    // ─────────────────────────────────────────────────────────
     [Header("Audio Source")]
     [SerializeField] private AudioSource sfxSource;
 
@@ -107,23 +71,23 @@ public class CupGamePuzzle : MonoBehaviour
     [SerializeField] private AudioClip spiderJumpscareClip;
     [SerializeField] private AudioClip winClip;
 
-    // ─────────────────────────────────────────────────────────
-    //  PRIVATE STATE
-    // ─────────────────────────────────────────────────────────
+    [Header("Interact")]
+    public float interactRange = 15f;
+
+    // private
     private int currentLevel = 1;
     private int coinCupIndex = 0;
     private bool isInteractable = false;
     private bool puzzleActive = false;
+    private bool _completed = false;
+    private bool _playerInRange = false;
+    private Transform _player;
 
     private Vector2[] slotPositions = new Vector2[3];
     private int[] cupToSlot = new int[3];
-
     private RectTransform[] cups;
     private Image[] cupImages;
 
-    // ─────────────────────────────────────────────────────────
-    //  UNITY LIFECYCLE
-    // ─────────────────────────────────────────────────────────
     private void Awake()
     {
         cups = new RectTransform[] { cup_Left, cup_Mid, cup_Right };
@@ -134,7 +98,6 @@ public class CupGamePuzzle : MonoBehaviour
 
         cupToSlot = new int[] { 0, 1, 2 };
 
-        // Start hidden
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
@@ -142,42 +105,39 @@ public class CupGamePuzzle : MonoBehaviour
         HideAllExtras();
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  [STEP C] — MAIN GAME: delete this entire Start() method
-    // ─────────────────────────────────────────────────────────
     private void Start()
     {
-        // TEST: Wire the Start button to open the puzzle automatically
-        if (startButton != null)
-            startButton.onClick.AddListener(() => StartCoroutine(OpenPuzzle()));
-        else
-            // No button assigned — just auto-open after 1 second
-            Invoke(nameof(AutoStart), 1f);
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
+        // Make sure panel starts hidden
+        if (cupGamePanel != null) cupGamePanel.SetActive(false);
     }
 
-    private void AutoStart() => StartCoroutine(OpenPuzzle());
+    private void Update()
+    {
+        if (_player == null || puzzleActive || _completed) return;
 
-    // ─────────────────────────────────────────────────────────
-    //  [STEP D] — MAIN GAME: uncomment this block and delete
-    //             the Start() + AutoStart() methods above
-    // ─────────────────────────────────────────────────────────
-    // public void OnInteract()
-    // {
-    //     if (puzzleActive) return;
-    //     StartCoroutine(OpenPuzzle());
-    // }
+        float dist = Vector3.Distance(
+            _player.position, transform.position);
+        _playerInRange = dist <= interactRange;
 
-    // ─────────────────────────────────────────────────────────
-    //  OPEN / CLOSE
-    // ─────────────────────────────────────────────────────────
+        if (_playerInRange && Input.GetKeyDown(KeyCode.E))
+            OnInteract();
+    }
+
+    public void OnInteract()
+    {
+        if (puzzleActive || _completed) return;
+        StartCoroutine(OpenPuzzle());
+    }
+
     private IEnumerator OpenPuzzle()
     {
         puzzleActive = true;
         currentLevel = 1;
 
-        PLACEHOLDER_SetInvincible(true); // [STEP E]
+        // Freeze player via MinigameManager
+        MinigameManager.Instance.StartMinigame(cupGamePanel, true);
 
-        // Instantly show the panel — no fade delay
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
@@ -188,35 +148,40 @@ public class CupGamePuzzle : MonoBehaviour
     private IEnumerator ClosePuzzle(bool solved)
     {
         yield return new WaitForSeconds(0.5f);
-
         yield return StartCoroutine(FadeCanvas(1f, 0f));
 
         puzzleActive = false;
 
-        PLACEHOLDER_SetInvincible(false); // [STEP E]
+        // Unfreeze player via MinigameManager
+        MinigameManager.Instance.EndMinigame(cupGamePanel);
 
         if (solved)
-            PLACEHOLDER_OnPuzzleSolved(); // [STEP G]
+        {
+            if (!_completed)
+            {
+                _completed = true;
+                TaskManager.Instance?.TaskCompleted();
+                Debug.Log("[CupGame] Solved! Task counted.");
+            }
+        }
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  LEVEL RUNNER
-    // ─────────────────────────────────────────────────────────
     private IEnumerator RunLevel(int level)
     {
         HideAllExtras();
         ResetCupPositions();
 
-        levelText.text = level < 3 ? $"LEVEL {level}" : "LEVEL 3 — IMPOSSIBLE";
-        instructionText.text = level < 3 ? "FIND THE COIN" : "CHOOSE WISELY...";
+        levelText.text = level < 3 ?
+            $"LEVEL {level}" : "LEVEL 3 — IMPOSSIBLE";
+        instructionText.text = level < 3 ?
+            "FIND THE COIN" : "CHOOSE WISELY...";
 
         bool hasCoin = level < 3;
         if (hasCoin)
         {
-            // Randomise which slot gets the coin
-            // After ResetCupPositions(), cup object index == slot index
             coinCupIndex = Random.Range(0, 3);
-            coinImage.anchoredPosition = cups[coinCupIndex].anchoredPosition + new Vector2(0, -20f);
+            coinImage.anchoredPosition =
+                cups[coinCupIndex].anchoredPosition + new Vector2(0, -20f);
             coinImage.gameObject.SetActive(false);
         }
         else
@@ -225,32 +190,26 @@ public class CupGamePuzzle : MonoBehaviour
             coinImage.gameObject.SetActive(false);
         }
 
-        // Levels 1 & 2: show coin under its cup before every shuffle (including retries)
         if (level < 3)
         {
-            // Snap position again just before revealing, in case of any drift
-            coinImage.anchoredPosition = cups[coinCupIndex].anchoredPosition + new Vector2(0, -20f);
+            coinImage.anchoredPosition =
+                cups[coinCupIndex].anchoredPosition + new Vector2(0, -20f);
             coinImage.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.9f);
             coinImage.gameObject.SetActive(false);
             yield return new WaitForSeconds(0.3f);
         }
 
-        // Shuffle
         float speed = GetShuffleSpeed(level);
         int count = GetShuffleCount(level);
         yield return StartCoroutine(ShuffleCups(count, speed));
 
-        // Wait for player to click a cup
         instructionText.text = "PICK A CUP";
         isInteractable = true;
 
         yield return new WaitUntil(() => !isInteractable);
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  CUP CLICK HANDLERS — wire these to Button OnClick()
-    // ─────────────────────────────────────────────────────────
     public void OnCupClicked_Left() { if (isInteractable) StartCoroutine(HandleCupChoice(0)); }
     public void OnCupClicked_Mid() { if (isInteractable) StartCoroutine(HandleCupChoice(1)); }
     public void OnCupClicked_Right() { if (isInteractable) StartCoroutine(HandleCupChoice(2)); }
@@ -263,23 +222,24 @@ public class CupGamePuzzle : MonoBehaviour
 
         if (currentLevel == 3)
         {
-            // Level 3 — spider under every cup, but player doesn't need to know that
-            // Only reveal the chosen cup — one jumpscare and done
-            // No damage — this is a sparing chance, the player just gets scared
             yield return StartCoroutine(LiftCup(cupIndex, false, true));
             yield return StartCoroutine(TriggerJumpscare());
-
-            // No PLACEHOLDER_ApplyDamage call here — intentional, sparing the player [STEP F]
-            // No "there is no winning" text — the secret stays with the devs
             yield return new WaitForSeconds(0.8f);
+            // Level 3 always counts task — win or lose
+            if (!_completed)
+            {
+                _completed = true;
+                TaskManager.Instance?.TaskCompleted();
+                Debug.Log("[CupGame] Level 3 done! Task counted.");
+            }
             yield return StartCoroutine(ClosePuzzle(false));
         }
         else if (correct)
         {
-            // Correct cup chosen
             yield return StartCoroutine(LiftCup(cupIndex, true, false));
             PlaySFX(winClip);
-            instructionText.text = currentLevel == 1 ? "YOU FOUND IT!" : "WELL DONE... FOR NOW";
+            instructionText.text = currentLevel == 1 ?
+                "YOU FOUND IT!" : "WELL DONE... FOR NOW";
             yield return new WaitForSeconds(1.2f);
 
             currentLevel++;
@@ -291,12 +251,12 @@ public class CupGamePuzzle : MonoBehaviour
         }
         else
         {
-            // Wrong cup — flat 10 damage on both level 1 and 2
             yield return StartCoroutine(LiftCup(cupIndex, false, true));
             yield return StartCoroutine(TriggerJumpscare());
-            PLACEHOLDER_ApplyDamage(10f); // [STEP F] flat 10 damage on wrong pick, levels 1 & 2
+            // Apply damage on wrong pick
+            if (PlayerHealth.instance != null)
+                PlayerHealth.instance.TakeDamage(10f);
 
-            // Slam cup back, reshuffle, retry same level
             yield return new WaitForSeconds(0.6f);
             yield return StartCoroutine(SlamCupDown(cupIndex));
             yield return new WaitForSeconds(0.4f);
@@ -304,9 +264,6 @@ public class CupGamePuzzle : MonoBehaviour
         }
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  SHUFFLE
-    // ─────────────────────────────────────────────────────────
     private IEnumerator ShuffleCups(int shuffleCount, float speed)
     {
         instructionText.text = "WATCH CAREFULLY...";
@@ -317,8 +274,6 @@ public class CupGamePuzzle : MonoBehaviour
             int b;
             do { b = Random.Range(0, 3); } while (b == a);
 
-            // Pitch up on faster levels so sound matches animation speed
-            // speed 0.6 (slow) = pitch ~0.9, speed 0.12 (fast) = pitch ~2.0
             if (sfxSource && cupSlideClip)
             {
                 sfxSource.pitch = Mathf.Clamp(0.4f / speed, 0.8f, 2.5f);
@@ -327,7 +282,6 @@ public class CupGamePuzzle : MonoBehaviour
             }
             yield return StartCoroutine(SwapCupsAnimated(a, b, speed));
 
-            // Track which cup object is now in which slot
             int tmp = cupToSlot[a];
             cupToSlot[a] = cupToSlot[b];
             cupToSlot[b] = tmp;
@@ -335,29 +289,21 @@ public class CupGamePuzzle : MonoBehaviour
             yield return new WaitForSeconds(speed * 0.1f);
         }
 
-        // RIG: levels 1 & 2 — animate every cup back to its original slot
-        // so coin cup always ends where it started. Fully visible to player.
         if (coinCupIndex >= 0)
-        {
             yield return StartCoroutine(AnimateCupsToHome(speed));
-        }
     }
 
-    // Smoothly slides all cups back to their original slot positions
     private IEnumerator AnimateCupsToHome(float speed)
     {
-        // Record where each cup currently is
         Vector2[] startPositions = new Vector2[3];
         for (int i = 0; i < 3; i++)
             startPositions[i] = cups[i].anchoredPosition;
 
-        // Play slide sound once at the start, pitch adjusted to match speed
-        // Fast shuffle (small speed value) = higher pitch, slow = normal pitch
         if (sfxSource && cupSlideClip)
         {
             sfxSource.pitch = Mathf.Clamp(0.4f / speed, 0.8f, 2.5f);
             sfxSource.PlayOneShot(cupSlideClip);
-            sfxSource.pitch = 1f; // reset immediately so other SFX are unaffected
+            sfxSource.pitch = 1f;
         }
 
         float elapsed = 0f;
@@ -368,7 +314,8 @@ public class CupGamePuzzle : MonoBehaviour
 
             for (int i = 0; i < 3; i++)
             {
-                cups[i].anchoredPosition = Vector2.Lerp(startPositions[i], slotPositions[i], et);
+                cups[i].anchoredPosition = Vector2.Lerp(
+                    startPositions[i], slotPositions[i], et);
                 ApplyPerspectiveScale(cups[i]);
             }
 
@@ -376,7 +323,6 @@ public class CupGamePuzzle : MonoBehaviour
             yield return null;
         }
 
-        // Snap exactly to home
         for (int i = 0; i < 3; i++)
         {
             cups[i].anchoredPosition = slotPositions[i];
@@ -384,8 +330,8 @@ public class CupGamePuzzle : MonoBehaviour
             cupToSlot[i] = i;
         }
 
-        // Coin is now correctly under its original cup
-        coinImage.anchoredPosition = cups[coinCupIndex].anchoredPosition + new Vector2(0, -20f);
+        coinImage.anchoredPosition =
+            cups[coinCupIndex].anchoredPosition + new Vector2(0, -20f);
     }
 
     private IEnumerator SwapCupsAnimated(int a, int b, float speed)
@@ -400,8 +346,10 @@ public class CupGamePuzzle : MonoBehaviour
             float et = EaseInOut(t);
             float arc = Mathf.Sin(t * Mathf.PI) * cupArcHeight;
 
-            cups[a].anchoredPosition = Vector2.Lerp(startA, startB, et) + new Vector2(0, arc);
-            cups[b].anchoredPosition = Vector2.Lerp(startB, startA, et) + new Vector2(0, arc);
+            cups[a].anchoredPosition =
+                Vector2.Lerp(startA, startB, et) + new Vector2(0, arc);
+            cups[b].anchoredPosition =
+                Vector2.Lerp(startB, startA, et) + new Vector2(0, arc);
 
             ApplyPerspectiveScale(cups[a]);
             ApplyPerspectiveScale(cups[b]);
@@ -418,16 +366,14 @@ public class CupGamePuzzle : MonoBehaviour
 
     private void ApplyPerspectiveScale(RectTransform cup)
     {
-        float yNorm = Mathf.InverseLerp(slotPositions[0].y,
-                                         slotPositions[0].y + backPositionYOffset,
-                                         cup.anchoredPosition.y);
+        float yNorm = Mathf.InverseLerp(
+            slotPositions[0].y,
+            slotPositions[0].y + backPositionYOffset,
+            cup.anchoredPosition.y);
         float s = Mathf.Lerp(1f, backPositionScale, yNorm);
         cup.localScale = new Vector3(s, s, 1f);
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  CUP LIFT / SLAM
-    // ─────────────────────────────────────────────────────────
     private IEnumerator LiftCup(int cupIndex, bool hasCoin, bool hasSpider)
     {
         PlaySFX(cupLiftClip);
@@ -441,7 +387,8 @@ public class CupGamePuzzle : MonoBehaviour
 
         while (elapsed < liftDur)
         {
-            cups[cupIndex].anchoredPosition = Vector2.Lerp(origin, lifted, EaseOut(elapsed / liftDur));
+            cups[cupIndex].anchoredPosition = Vector2.Lerp(
+                origin, lifted, EaseOut(elapsed / liftDur));
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -467,7 +414,8 @@ public class CupGamePuzzle : MonoBehaviour
 
         while (elapsed < dur)
         {
-            cups[cupIndex].anchoredPosition = Vector2.Lerp(current, target, EaseIn(elapsed / dur));
+            cups[cupIndex].anchoredPosition = Vector2.Lerp(
+                current, target, EaseIn(elapsed / dur));
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -478,9 +426,6 @@ public class CupGamePuzzle : MonoBehaviour
         coinImage.gameObject.SetActive(false);
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  JUMPSCARE
-    // ─────────────────────────────────────────────────────────
     private IEnumerator TriggerJumpscare()
     {
         PlaySFX(spiderJumpscareClip);
@@ -488,18 +433,15 @@ public class CupGamePuzzle : MonoBehaviour
         screenFlash.color = new Color(1f, 0f, 0f, 0f);
         screenFlash.gameObject.SetActive(true);
 
-        PLACEHOLDER_ShakeCamera(); // [STEP H]
-
-        // Flash red in
         float elapsed = 0f;
         while (elapsed < 0.05f)
         {
-            screenFlash.color = new Color(1f, 0f, 0f, Mathf.Lerp(0f, 0.85f, elapsed / 0.05f));
+            screenFlash.color = new Color(1f, 0f, 0f,
+                Mathf.Lerp(0f, 0.85f, elapsed / 0.05f));
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // Spider slams onto screen
         spiderFullscreen.gameObject.SetActive(true);
         spiderFullscreen.transform.localScale = new Vector3(1.4f, 1.4f, 1f);
         elapsed = 0f;
@@ -513,15 +455,16 @@ public class CupGamePuzzle : MonoBehaviour
 
         yield return new WaitForSeconds(0.7f);
 
-        // Fade everything out
         elapsed = 0f;
         Color startFlash = screenFlash.color;
         Color startSpider = spiderFullscreen.color;
         while (elapsed < 0.35f)
         {
             float t = elapsed / 0.35f;
-            screenFlash.color = Color.Lerp(startFlash, new Color(1f, 0f, 0f, 0f), t);
-            spiderFullscreen.color = Color.Lerp(startSpider, new Color(1f, 1f, 1f, 0f), t);
+            screenFlash.color = Color.Lerp(
+                startFlash, new Color(1f, 0f, 0f, 0f), t);
+            spiderFullscreen.color = Color.Lerp(
+                startSpider, new Color(1f, 1f, 1f, 0f), t);
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -531,9 +474,6 @@ public class CupGamePuzzle : MonoBehaviour
         spiderFullscreen.color = Color.white;
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  HELPERS
-    // ─────────────────────────────────────────────────────────
     private void HideAllExtras()
     {
         if (spiderFullscreen) spiderFullscreen.gameObject.SetActive(false);
@@ -554,7 +494,8 @@ public class CupGamePuzzle : MonoBehaviour
 
     private void PositionCoinUnderCup(int cupIndex)
     {
-        coinImage.anchoredPosition = cups[cupIndex].anchoredPosition + new Vector2(0, -20f);
+        coinImage.anchoredPosition =
+            cups[cupIndex].anchoredPosition + new Vector2(0, -20f);
     }
 
     private IEnumerator FadeCanvas(float from, float to)
@@ -598,42 +539,8 @@ public class CupGamePuzzle : MonoBehaviour
         if (sfxSource && clip) sfxSource.PlayOneShot(clip);
     }
 
-    // ─────────────────────────────────────────────────────────
-    //  EASING
-    // ─────────────────────────────────────────────────────────
-    private static float EaseInOut(float t) => t < 0.5f ? 2 * t * t : 1 - Mathf.Pow(-2 * t + 2, 2) / 2;
+    private static float EaseInOut(float t) =>
+        t < 0.5f ? 2 * t * t : 1 - Mathf.Pow(-2 * t + 2, 2) / 2;
     private static float EaseOut(float t) => 1 - (1 - t) * (1 - t);
     private static float EaseIn(float t) => t * t;
-
-    // ─────────────────────────────────────────────────────────
-    //  PLACEHOLDERS — replace these when integrating main game
-    // ─────────────────────────────────────────────────────────
-
-    /// [STEP E] — MAIN GAME: replace body with:
-    /// GameManager.instance.SetInvincible(state);
-    private void PLACEHOLDER_SetInvincible(bool state)
-    {
-        Debug.Log($"[CupGame] PLACEHOLDER — SetInvincible({state})");
-    }
-
-    /// [STEP F] — MAIN GAME: replace body with:
-    /// PlayerHealth.instance.TakeDamage(amount);
-    private void PLACEHOLDER_ApplyDamage(float amount)
-    {
-        Debug.Log($"[CupGame] PLACEHOLDER — TakeDamage({amount})");
-    }
-
-    /// [STEP G] — MAIN GAME: replace body with:
-    /// GameManager.instance.OnPuzzleSolved("CupGame");
-    private void PLACEHOLDER_OnPuzzleSolved()
-    {
-        Debug.Log("[CupGame] PLACEHOLDER — Puzzle Solved!");
-    }
-
-    /// [STEP H] — MAIN GAME: replace body with your camera shake call e.g.:
-    /// CameraShake.instance.Shake(0.3f, 0.15f);
-    private void PLACEHOLDER_ShakeCamera()
-    {
-        Debug.Log("[CupGame] PLACEHOLDER — ShakeCamera()");
-    }
 }

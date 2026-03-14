@@ -2,38 +2,32 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 
-/// <summary>
-/// PhoneRinging.cs
-/// Place on the invisible trigger GameObject near the phone.
-/// Plays ringing sound when player is in range, shows "Press C" prompt.
-/// When C is pressed, hands off to PhoneCallManager.
-/// </summary>
 public class PhoneRinging : MonoBehaviour
 {
     [Header("── Range ──")]
-    public float ringRange      = 6f;   // Distance to start ringing
-    public float interactRange  = 2.5f; // Distance to show "Press C"
-    public Transform player;
+    public float ringRange = 15f;
+    public float interactRange = 15f;
 
     [Header("── Audio ──")]
     public AudioSource audioSource;
-    public AudioClip   ringClip;        // Assign a phone ring sound (or leave null for beep)
+    public AudioClip ringClip;
 
     [Header("── UI ──")]
-    public GameObject  promptUI;        // Panel with "Press C to answer"
+    public GameObject promptUI;
     public TextMeshProUGUI promptText;
 
     [Header("── References ──")]
     public PhoneCallManager callManager;
 
-    // ── Private ──
-    private bool  isRinging    = false;
-    private bool  callAnswered = false;
-    private float beepTimer    = 0f;
-    private float beepInterval = 2.2f;  // Ring every 2.2 seconds
+    // private
+    private bool isRinging = false;
+    private bool callAnswered = false;
+    private float beepInterval = 2.2f;
+    private Transform _player;
 
     void Start()
     {
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
         if (promptUI) promptUI.SetActive(false);
     }
 
@@ -41,11 +35,10 @@ public class PhoneRinging : MonoBehaviour
     {
         if (callAnswered) return;
 
-        float dist = player
-            ? Vector3.Distance(player.position, transform.position)
-            : float.MaxValue;
+        float dist = _player != null ?
+            Vector3.Distance(_player.position, transform.position) :
+            float.MaxValue;
 
-        // Start / stop ringing based on range
         if (dist <= ringRange && !isRinging)
         {
             isRinging = true;
@@ -57,15 +50,12 @@ public class PhoneRinging : MonoBehaviour
             StopRinging();
         }
 
-        // Show / hide "Press C" prompt
         if (promptUI)
             promptUI.SetActive(isRinging && dist <= interactRange);
 
-        // Answer call
-        if (isRinging && dist <= interactRange && Input.GetKeyDown(KeyCode.C))
-        {
+        if (isRinging && dist <= interactRange &&
+            Input.GetKeyDown(KeyCode.C))
             AnswerCall();
-        }
     }
 
     IEnumerator RingLoop()
@@ -80,21 +70,14 @@ public class PhoneRinging : MonoBehaviour
     void PlayRingBeep()
     {
         if (!audioSource) return;
-
         if (ringClip != null)
-        {
             audioSource.PlayOneShot(ringClip);
-        }
         else
-        {
-            // Procedural ring beep — no clip needed
             StartCoroutine(ProceduralRing());
-        }
     }
 
     IEnumerator ProceduralRing()
     {
-        // Two short beeps like a real phone ring
         yield return StartCoroutine(PlayTone(480f, 0.4f, 0.6f));
         yield return new WaitForSeconds(0.15f);
         yield return StartCoroutine(PlayTone(480f, 0.4f, 0.6f));
@@ -102,18 +85,19 @@ public class PhoneRinging : MonoBehaviour
 
     IEnumerator PlayTone(float frequency, float duration, float volume)
     {
-        int sampleRate  = AudioSettings.outputSampleRate;
+        int sampleRate = AudioSettings.outputSampleRate;
         int sampleCount = Mathf.RoundToInt(sampleRate * duration);
         float[] samples = new float[sampleCount];
-
         for (int i = 0; i < sampleCount; i++)
         {
-            float t        = (float)i / sampleRate;
-            float envelope = Mathf.Clamp01(Mathf.Min(t / 0.01f, (duration - t) / 0.01f));
-            samples[i]     = Mathf.Sin(2f * Mathf.PI * frequency * t) * volume * envelope;
+            float t = (float)i / sampleRate;
+            float envelope = Mathf.Clamp01(
+                Mathf.Min(t / 0.01f, (duration - t) / 0.01f));
+            samples[i] = Mathf.Sin(2f * Mathf.PI * frequency * t)
+                * volume * envelope;
         }
-
-        AudioClip clip = AudioClip.Create("RingTone", sampleCount, 1, sampleRate, false);
+        AudioClip clip = AudioClip.Create(
+            "RingTone", sampleCount, 1, sampleRate, false);
         clip.SetData(samples, 0);
         audioSource.PlayOneShot(clip);
         yield return new WaitForSeconds(duration);
@@ -134,10 +118,9 @@ public class PhoneRinging : MonoBehaviour
         else Debug.LogError("[PhoneRinging] PhoneCallManager not assigned!");
     }
 
-    // Call this from PhoneCallManager when minigame fully ends
     public void ResetPhone()
     {
         callAnswered = false;
-        isRinging    = false;
+        isRinging = false;
     }
 }
