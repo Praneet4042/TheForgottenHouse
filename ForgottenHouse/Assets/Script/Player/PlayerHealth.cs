@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
+
     public static PlayerHealth instance;
     public float maxHealth = 100f;
     public float currentHealth = 100f;
@@ -27,21 +28,29 @@ public class PlayerHealth : MonoBehaviour
 
     void Update()
     {
-        if (dead || isInvincible) return;
-        currentHealth -= drainRate * Time.deltaTime;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        UpdateHealthBar(); // ADD THIS LINE
+        if (dead) return;
 
-        if (ghost != null && LanternToggle.instance.isOn)
+        if (!isInvincible)
         {
-            float dist = Vector3.Distance(transform.position, ghost.position);
-            if (dist <= killRadius)
+            // Drain health over time (only once!)
+            currentHealth -= drainRate * Time.deltaTime;
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+            UpdateHealthBar();
+
+            // Ghost proximity check
+            if (ghost != null && LanternToggle.instance.isOn)
             {
-                Die("The ghost got you...");
-                return;
+                float dist = Vector3.Distance(
+                    transform.position, ghost.position);
+                if (dist <= killRadius)
+                {
+                    Die("The ghost got you...");
+                    return;
+                }
             }
+
+            if (currentHealth <= 0) Die("You ran out of time...");
         }
-        if (currentHealth <= 0) Die("You ran out of time...");
     }
     void UpdateHealthBar()
     {

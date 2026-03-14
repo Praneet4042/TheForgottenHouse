@@ -6,6 +6,8 @@ using TMPro;
 
 public class OuijaBoardPuzzle_TEST : MonoBehaviour
 {
+    [Header("Prank UI")]
+    public GameObject prankPanel;
     [Header("Panel References")]
     public GameObject boardPanel;
     public Image dimOverlay;
@@ -68,17 +70,13 @@ public class OuijaBoardPuzzle_TEST : MonoBehaviour
             _playerInRange = dist <= interactRange;
 
             if (_playerInRange && Input.GetKeyDown(KeyCode.E))
-            {
-                Debug.Log("Ouija E pressed!");
                 OnInteract();
-            }
         }
     }
 
     public void OnInteract()
     {
         if (isOpen || _completed) return;
-        Debug.Log("OnInteract called!");
         MinigameManager.Instance.StartMinigame(boardPanel, true);
         StartCoroutine(OpenBoard());
     }
@@ -147,6 +145,12 @@ public class OuijaBoardPuzzle_TEST : MonoBehaviour
         PlayAudio(goodOutcomeSFX);
         yield return StartCoroutine(
             TypewriterSpell("THE SPIRITS GRANT YOU PEACE"));
+        PlayerHealth ph = GameObject.FindGameObjectWithTag("Player")
+            .GetComponent<PlayerHealth>();
+        if (ph != null)
+            ph.currentHealth = Mathf.Min(
+                ph.currentHealth + 20f, ph.maxHealth);
+        yield return StartCoroutine(FlashScreen(Color.green, 0.5f));
         CountTask();
         yield return StartCoroutine(CloseBoard());
     }
@@ -155,6 +159,7 @@ public class OuijaBoardPuzzle_TEST : MonoBehaviour
     {
         PlayAudio(badOutcomeSFX);
         yield return StartCoroutine(ScreenFlash());
+        yield return StartCoroutine(FlashScreen(Color.red, 0.5f));
         PlayerHealth ph = GameObject.FindGameObjectWithTag("Player")
             .GetComponent<PlayerHealth>();
         if (ph != null) ph.currentHealth -= 10f;
@@ -166,18 +171,37 @@ public class OuijaBoardPuzzle_TEST : MonoBehaviour
     {
         PlayAudio(badOutcomeSFX);
         yield return StartCoroutine(TypewriterSpell("WE LIKE YOU"));
+
         PlayerHealth ph = GameObject.FindGameObjectWithTag("Player")
             .GetComponent<PlayerHealth>();
+
         if (ph != null)
         {
             float savedHealth = ph.currentHealth;
-            Debug.Log("Health before prank: " + savedHealth); // ADD
-            ph.currentHealth = 1f;
-            Debug.Log("Health dropped to 1!"); // ADD
-            yield return new WaitForSeconds(1.5f);
+
+            // Set invincible so real health stays safe
+            ph.SetInvincible(true);
+
+            // Show fake prank panel
+            if (prankPanel != null) prankPanel.SetActive(true);
+
+            // Red flash
+            yield return StartCoroutine(FlashScreen(Color.red, 0.8f));
+
+            // Wait so player panics
+            yield return new WaitForSeconds(2.5f);
+
+            // Hide prank panel
+            if (prankPanel != null) prankPanel.SetActive(false);
+
+            // Restore health
             ph.currentHealth = savedHealth;
-            Debug.Log("Health restored to: " + savedHealth); // ADD
+            ph.SetInvincible(false);
+
+            // Green flash - relief!
+            yield return StartCoroutine(FlashScreen(Color.green, 0.5f));
         }
+
         CountTask();
         yield return StartCoroutine(CloseBoard());
     }
@@ -189,7 +213,11 @@ public class OuijaBoardPuzzle_TEST : MonoBehaviour
             TypewriterSpell("YOU SHOULD NOT HAVE COME"));
         PlayerHealth ph = GameObject.FindGameObjectWithTag("Player")
             .GetComponent<PlayerHealth>();
-        if (ph != null) ph.currentHealth *= 0.5f;
+        if (ph != null)
+        {
+            ph.currentHealth *= 0.5f;
+            yield return StartCoroutine(FlashScreen(Color.red, 1.2f));
+        }
         CountTask();
         yield return StartCoroutine(PlanchetteFliesOff());
         yield return StartCoroutine(CloseBoard(2f));
@@ -201,6 +229,29 @@ public class OuijaBoardPuzzle_TEST : MonoBehaviour
         _completed = true;
         TaskManager.Instance?.TaskCompleted();
         Debug.Log("[OuijaBoard] Task counted.");
+    }
+
+    IEnumerator FlashScreen(Color flashColor, float duration)
+    {
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / (duration * 0.3f);
+            dimOverlay.color = new Color(
+                flashColor.r, flashColor.g, flashColor.b,
+                Mathf.Lerp(0f, 0.6f, t));
+            yield return null;
+        }
+        t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / (duration * 0.7f);
+            dimOverlay.color = new Color(
+                flashColor.r, flashColor.g, flashColor.b,
+                Mathf.Lerp(0.6f, 0f, t));
+            yield return null;
+        }
+        dimOverlay.color = new Color(0f, 0f, 0f, 0f);
     }
 
     IEnumerator TypewriterSpell(string message)
