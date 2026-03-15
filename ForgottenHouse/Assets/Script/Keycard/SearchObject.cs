@@ -3,6 +3,8 @@ using TMPro;
 
 public class SearchObject : MonoBehaviour
 {
+    [Header("Asset to Glow")]
+    public Outline assetOutline;
     [Header("Settings")]
     public string objectName = "Drawer";
     public float interactRange = 5f;
@@ -34,9 +36,8 @@ public class SearchObject : MonoBehaviour
         _player = GameObject.FindGameObjectWithTag("Player").transform;
         _camera = Camera.main;
         // Setup outline
-        _outline = GetComponent<Outline>();
-        if (_outline == null)
-            _outline = gameObject.AddComponent<Outline>();
+        _outline = assetOutline;
+        if (_outline != null) _outline.enabled = false;
 
         _outline.OutlineColor = new Color(1f, 0.7f, 0f); // golden
         _outline.OutlineWidth = 5f;

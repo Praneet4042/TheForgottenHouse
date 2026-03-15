@@ -6,6 +6,8 @@ using TMPro;
 
 public class OuijaBoardPuzzle_TEST : MonoBehaviour
 {
+    [Header("Asset to Glow")]
+    public Outline assetOutline;
 
     [Header("Prank UI")]
     public GameObject prankPanel;
@@ -68,6 +70,8 @@ public class OuijaBoardPuzzle_TEST : MonoBehaviour
     void Start()
     {
         _player = GameObject.FindGameObjectWithTag("Player").transform;
+        _outline = assetOutline;
+        if (_outline != null) _outline.enabled = false;
     }
 
     void Update()

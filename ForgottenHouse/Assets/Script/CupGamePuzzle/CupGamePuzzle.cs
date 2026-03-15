@@ -6,6 +6,8 @@ using TMPro;
 
 public class CupGamePuzzle : MonoBehaviour
 {
+    [Header("Asset to Glow")]
+    public Outline assetOutline;
     [Header("Canvas & Overlay")]
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private Image dimOverlay;
@@ -114,9 +116,7 @@ public class CupGamePuzzle : MonoBehaviour
         _player = GameObject.FindGameObjectWithTag("Player").transform;
         // Make sure panel starts hidden
         if (cupGamePanel != null) cupGamePanel.SetActive(false);
-        _outline = GetComponentInChildren<Outline>();
-        if (_outline == null)
-            _outline = GetComponentInParent<Outline>();
+        _outline = assetOutline;
         if (_outline != null) _outline.enabled = false;
         if (worldPrompt != null) worldPrompt.text = "";
     }

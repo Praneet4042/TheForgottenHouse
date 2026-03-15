@@ -5,6 +5,8 @@ using System.Collections;
 
 public class ScaryMazeGame : MonoBehaviour
 {
+    [Header("Asset to Glow")]
+    public Outline assetOutline;
     [Header("Main Panel")]
     public GameObject mazeGamePanel;
 
@@ -58,9 +60,7 @@ public class ScaryMazeGame : MonoBehaviour
         if (jumpscarePanel != null) jumpscarePanel.SetActive(false);
         if (mazeGamePanel != null) mazeGamePanel.SetActive(false);
 
-        _outline = GetComponentInChildren<Outline>();
-        if (_outline == null)
-            _outline = GetComponentInParent<Outline>();
+        _outline = assetOutline;
         if (_outline != null) _outline.enabled = false;
 
         if (worldPrompt != null) worldPrompt.text = "";

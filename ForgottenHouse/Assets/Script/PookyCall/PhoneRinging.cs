@@ -4,6 +4,8 @@ using TMPro;
 
 public class PhoneRinging : MonoBehaviour
 {
+    [Header("Asset to Glow")]
+    public Outline assetOutline;
     [Header("── Range ──")]
     public float ringRange = 15f;
     public float interactRange = 15f;
@@ -34,9 +36,7 @@ public class PhoneRinging : MonoBehaviour
         _player = GameObject.FindGameObjectWithTag("Player").transform;
         if (promptUI != null) promptUI.SetActive(false);
 
-        _outline = GetComponentInChildren<Outline>();
-        if (_outline == null)
-            _outline = GetComponentInParent<Outline>();
+        _outline = assetOutline;
         if (_outline != null) _outline.enabled = false;
 
         if (worldPrompt != null) worldPrompt.text = "";

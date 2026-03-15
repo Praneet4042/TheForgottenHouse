@@ -4,6 +4,8 @@ using TMPro;
 
 public class TimingBarMinigame : MonoBehaviour
 {
+    [Header("Asset to Glow")]
+    public Outline assetOutline;
     [Header("── Trigger ──")]
     public float interactRange = 15f;
     private Transform _player;
@@ -40,9 +42,7 @@ public class TimingBarMinigame : MonoBehaviour
         if (completedPanel != null) completedPanel.SetActive(false);
         if (minigamePanel != null) minigamePanel.SetActive(false);
 
-        _outline = GetComponentInChildren<Outline>();
-        if (_outline == null)
-            _outline = GetComponentInParent<Outline>();
+        _outline = assetOutline;
         if (_outline != null) _outline.enabled = false;
 
         if (worldPrompt != null) worldPrompt.text = "";

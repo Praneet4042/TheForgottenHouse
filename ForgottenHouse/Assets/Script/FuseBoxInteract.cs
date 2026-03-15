@@ -3,6 +3,8 @@ using TMPro;
 
 public class FuseBoxInteract : MonoBehaviour
 {
+    [Header("Asset to Glow")]
+    public Outline assetOutline;
     [Header("Settings")]
     public float interactRange = 10f;
 
@@ -22,9 +24,7 @@ public class FuseBoxInteract : MonoBehaviour
         if (_minigame == null)
             _minigame = FindObjectOfType<FuseBoxMinigame>();
 
-        _outline = GetComponentInChildren<Outline>();
-        if (_outline == null)
-            _outline = GetComponentInParent<Outline>();
+        _outline = assetOutline;
         if (_outline != null) _outline.enabled = false;
 
         if (worldPrompt != null) worldPrompt.text = "";
