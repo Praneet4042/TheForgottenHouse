@@ -152,9 +152,12 @@ public class CupGamePuzzle : MonoBehaviour
     private IEnumerator OpenPuzzle()
     {
         puzzleActive = true;
+
+        if (_outline != null) _outline.enabled = false;
+        if (worldPrompt != null) worldPrompt.text = "";
+
         currentLevel = 1;
 
-        // Freeze player via MinigameManager
         MinigameManager.Instance.StartMinigame(cupGamePanel, true);
 
         canvasGroup.alpha = 1f;
