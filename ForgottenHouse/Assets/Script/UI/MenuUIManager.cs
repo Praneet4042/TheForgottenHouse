@@ -1,64 +1,59 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
-public class MenuUIManager : MonoBehaviour
+
+public class MenuManager : MonoBehaviour
 {
     public GameObject mainMenuPanel;
-    public GameObject howToPlayPanel;
-    public GameObject creditsPanel;
 
-    public TextMeshProUGUI textComponent;
-    public float typingSpeed = 0.05f;
+    public GameObject panel1;
+    public GameObject panel2;
+    public GameObject panel3;
+    public GameObject panel4;
 
-    private string fullText;
-    void Start()
+    public void OpenInstructions()
     {
-        fullText = textComponent.text;
-        ShowMainMenu();
+        mainMenuPanel.SetActive(false);
+        panel1.SetActive(true);
     }
 
-    public void ShowMainMenu()
+    public void Next1()
     {
+        panel1.SetActive(false);
+        panel2.SetActive(true);
+    }
+
+    public void Next2()
+    {
+        panel2.SetActive(false);
+        panel3.SetActive(true);
+    }
+
+    public void Next3()
+    {
+        panel3.SetActive(false);
+        panel4.SetActive(true);
+    }
+
+    public void Back1()
+    {
+        panel2.SetActive(false);
+        panel1.SetActive(true);
+    }
+
+    public void Back2()
+    {
+        panel3.SetActive(false);
+        panel2.SetActive(true);
+    }
+
+    public void Back3()
+    {
+        panel4.SetActive(false);
+        panel3.SetActive(true);
+    }
+
+    public void ReturnToMenu()
+    {
+        panel4.SetActive(false);
         mainMenuPanel.SetActive(true);
-        howToPlayPanel.SetActive(false);
-        creditsPanel.SetActive(false);
-    }
-
-    public void ShowHowToPlay()
-    {
-        mainMenuPanel.SetActive(false);
-        howToPlayPanel.SetActive(true);
-        creditsPanel.SetActive(false);
-
-        StartCoroutine(TypeText());
-    }
-
-    public void ShowCredits()
-    {
-        mainMenuPanel.SetActive(false);
-        howToPlayPanel.SetActive(false);
-        creditsPanel.SetActive(true);
-    }
-    public void StartGame()
-    {
-        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
-        SceneManager.LoadScene(nextScene);
-    }
-    public void QuitGame()
-    {
-        Application.Quit();
-    }
-
-    IEnumerator TypeText()
-    {
-        textComponent.text = "";
-
-        foreach (char letter in fullText)
-        {
-            textComponent.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
-        }
     }
 }
-

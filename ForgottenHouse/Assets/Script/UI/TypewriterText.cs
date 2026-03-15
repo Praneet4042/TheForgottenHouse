@@ -5,13 +5,14 @@ using UnityEngine;
 public class TypewriterText : MonoBehaviour
 {
     public TextMeshProUGUI textComponent;
-    public float typingSpeed = 0.05f;
+    public float typingSpeed = 0.03f;
 
-    private string fullText;
+    [TextArea]
+    public string fullText;
 
-    void Start()
+    void OnEnable()
     {
-        fullText = "Here are the Instructions";
+        StopAllCoroutines();
         StartCoroutine(TypeText());
     }
 
@@ -19,7 +20,7 @@ public class TypewriterText : MonoBehaviour
     {
         textComponent.text = "";
 
-        foreach (char letter in fullText.ToCharArray())
+        foreach (char letter in fullText)
         {
             textComponent.text += letter;
             yield return new WaitForSeconds(typingSpeed);
