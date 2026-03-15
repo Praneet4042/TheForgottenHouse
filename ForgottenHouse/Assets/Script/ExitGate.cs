@@ -1,5 +1,6 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ExitGate : MonoBehaviour
 {
@@ -58,10 +59,11 @@ public class ExitGate : MonoBehaviour
             Exit();
     }
 
-    void Exit()
+    public void Exit()
     {
         _exited = true;
         if (worldPrompt != null) worldPrompt.text = "";
-        UnityEngine.SceneManagement.SceneManager.LoadScene(endSceneName);
+        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+        SceneManager.LoadScene(nextScene);
     }
 }

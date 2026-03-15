@@ -278,7 +278,7 @@ A Simon Says style sequence memory game. Watch the fuse buttons light up in sequ
 
 **Mechanics:**
 - 6 colored fuse buttons (Red, Blue, Green, Yellow, Purple, Orange)
-- 9-step sequence to memorize and repeat
+- 6-step sequence to memorize and repeat
 - Sequence shown with color highlight flashes
 - Wrong button → "The sequence fails. Try again." + new sequence generated
 - Complete sequence → "Fuses aligned. Something stirs."
@@ -300,7 +300,7 @@ A fully animated Ouija Board with a planchette that glides smoothly to spell out
 | Path | Fate | Health Effect | Screen Effect |
 |------|------|--------------|---------------|
 | YES → YES | PRANK | Drops to 1 HP then restores | Red flash → Green flash |
-| YES → NO | CURSE | Health cut in half | Large red flash |
+| YES → NO | CURSE | Health cut in half |
 | NO → YES | SPARED | Healed +20 HP | Green flash |
 | NO → NO | JUMPSCARE | -10 HP | White flash → Red flash |
 
@@ -505,10 +505,10 @@ The game interprets both jam themes simultaneously through a single mechanic (th
 
 | Name | Role |
 |------|------|
-| **Praneet Ayush Lakra** | Integration Manager — Main scene, Ghost AI, Health System, Door System, Keycard Hunt, Doll Bonfire, all script integration, NavMesh, lighting, Assets Generation, Ideation |
-| **Ayush Kumar** | Timing Bar minigame, Spooky call minigame, Terrain Building, Sound FX, Sound Manager, Ideation|
-| **Pious Kujur** | Mini Game Ideation, Scary Maze minigame, Ouija Board minigame, ShellGame Minigame, Sound FX, Sound Manager, Ideation, Main Game Core Ideation |
-| **Mayank Kapse** | Start Screen, End Screen, Pause Menu, Typewriter Mechanic, SoundFX, Instruction,  Ideation |
+| **Praneet Ayush Lakra** | Integration Manager — Main scene, Ghost AI, Health System, Door System, Keycard Hunt, Doll Bonfire, all script integration, NavMesh, lighting, Assets Generation, Ideation,SoundSFX |
+| **Ayush Kumar** | Timing Bar minigame, Spooky call minigame, Terrain Building, Sound SFX, Sound Manager, Ideation|
+| **Pious Kujur** | Mini Game Ideation, Scary Maze minigame, Ouija Board minigame, ShellGame Minigame, Sound SFX, Sound Manager, Ideation, Main Game Core Ideation |
+| **Mayank Kapse** | Start Screen, End Screen, Pause Menu, Typewriter Mechanic, SoundSFX, Instruction,  Ideation |
 | **Mayank Agarwal** | Assets Generation from Tripo AI, Ideation |
 
 ---
