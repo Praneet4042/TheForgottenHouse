@@ -35,7 +35,7 @@ public class PillBox : MonoBehaviour
         bool inRange = dist <= interactRange;
 
         if (worldPrompt != null)
-            worldPrompt.text = inRange ? "[C] Take pill (+50% health)" : "";
+            worldPrompt.text = inRange ? "[C] Take pill (+75% health)" : "";
 
         if (inRange && Input.GetKeyDown(KeyCode.C))
             UsePill();
