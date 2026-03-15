@@ -1166,7 +1166,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4569840712088398844, guid: fc23d0b9dfc0e7145ac7dd9d2c74a7b5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -45
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 4569840712088398844, guid: fc23d0b9dfc0e7145ac7dd9d2c74a7b5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1311,7 +1311,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 302, y: 270}
+  m_AnchoredPosition: {x: 302, y: 201.92}
   m_SizeDelta: {x: 795.3309, y: 162.7181}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1070016691
@@ -1334,7 +1334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Forgotten House
+  m_text: THE\nFORGOTTEN\nHOUSE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3af6bc41632ff304eac13484b36b1267, type: 2}
   m_sharedMaterial: {fileID: -5479742775250729056, guid: 3af6bc41632ff304eac13484b36b1267, type: 2}
@@ -1895,7 +1895,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4569840712088398844, guid: fc23d0b9dfc0e7145ac7dd9d2c74a7b5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -150
+      value: -56.7
       objectReference: {fileID: 0}
     - target: {fileID: 4569840712088398844, guid: fc23d0b9dfc0e7145ac7dd9d2c74a7b5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2963,7 +2963,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 60.733376, y: 64}
+  m_AnchoredPosition: {x: 60.733376, y: 234.1}
   m_SizeDelta: {x: 298.2935, y: 82.1288}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1784693013
