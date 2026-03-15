@@ -180,7 +180,7 @@ Unlock exit gate and escape!
 | **WASD** | Move |
 | **Left Shift** | Sprint |
 | **Mouse** | Look Around |
-| **T** | Toggle Lantern ON/OFF |
+| **X** | Toggle Lantern ON/OFF |
 | **F** | Interact with all minigame objects |
 | **C** | Search objects (Keycard Hunt only) |
 | **SPACE** | Stop the ball (Timing Bar only) |
@@ -189,6 +189,7 @@ Unlock exit gate and escape!
 ### Survival Mechanics
 
 - **Health Drain** — Health decreases constantly at 2 HP/second
+- **Sprint System** — player can only sprint for 3 seconds and there is a cooldown of 7 seconds
 - **Ghost Proximity Drain** — Ghost drains health faster when within 30 units
 - **Kill Radius** — Ghost instantly kills player if within 5 units
 - **Lantern Toggle** — T key turns lantern ON (dangerous) or OFF (safe)

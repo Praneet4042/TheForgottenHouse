@@ -5,7 +5,7 @@ public class LanternController : MonoBehaviour
     public static LanternController instance;
     public Light lanternLight;
     public bool isOn = false;
-    public KeyCode toggleKey = KeyCode.T;
+    public KeyCode toggleKey = KeyCode.X;
 
     void Awake()
     {

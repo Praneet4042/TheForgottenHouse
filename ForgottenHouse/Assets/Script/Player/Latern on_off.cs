@@ -14,7 +14,7 @@ public class LanternToggle : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (Input.GetKeyDown(KeyCode.X))
         {
             isOn = !isOn;
             lanternLight.enabled = isOn;

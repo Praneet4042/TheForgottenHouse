@@ -82,4 +82,9 @@ public class PlayerHealth : MonoBehaviour
         Debug.Log("PLAYER DEAD: " + msg);
         GameOverManager.instance.ShowGameOver(msg);
     }
+    public void KillPlayer(string msg)
+    {
+        if (dead) return;
+        Die(msg);
+    }
 }

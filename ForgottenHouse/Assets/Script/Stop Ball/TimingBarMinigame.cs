@@ -84,8 +84,9 @@ public class TimingBarMinigame : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            float greenEnd = L.greenStartX + L.greenWidth;
-            bool onGreen = ballPos >= L.greenStartX && ballPos <= greenEnd;
+            float greenStart = L.greenStartX - (L.ballSize * 0.5f);
+            float greenEnd = L.greenStartX + L.greenWidth + (L.ballSize * 0.5f);
+            bool onGreen = ballPos >= greenStart && ballPos <= greenEnd;
             if (onGreen) HandleSuccess();
             else HandleFail();
         }
