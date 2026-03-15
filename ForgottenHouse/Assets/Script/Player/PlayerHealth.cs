@@ -23,7 +23,7 @@ public class PlayerHealth : MonoBehaviour
 
     void Start()
     {
-        ghost = GameObject.Find("Ghost").transform;
+        ghost = FindObjectOfType<GhostAI>().transform;
     }
 
     void Update()

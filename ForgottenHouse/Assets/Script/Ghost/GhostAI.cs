@@ -47,6 +47,8 @@ public class GhostAI : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
+        if (!_aiActive) return;
+
         if (other.CompareTag("Player"))
         {
             PlayerHealth ph = other.GetComponent<PlayerHealth>();
