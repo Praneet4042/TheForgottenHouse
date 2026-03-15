@@ -200,6 +200,8 @@ Unlock exit gate and escape!
 
 ## 🎯 Minigames
 
+**OFF the lantern using X whille playing minigame to survive**
+
 ### 1. 🗝️ Keycard Hunt
 **Location:** Living Room + Bedroom 1
 **Key:** C to search
@@ -340,7 +342,7 @@ Find 8 horror dolls scattered across the yard and burn them one by one at the bo
 - All 8 dolls glow with orange outline when lantern is ON and task started
 - Can only carry one doll at a time — must return to bonfire after each
 - Return to bonfire and press O to throw it in
-- Each doll burned → +5 HP restored to player
+- Each doll burned → +20 HP restored to player
 - Progress counter displayed: "X/8 DOLLS DESTROYED"
 - "It is done..." world space message on completion
 - Task counted when all 8 are burned
