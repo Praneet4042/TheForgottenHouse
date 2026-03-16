@@ -41,7 +41,7 @@
 
 ## 📌 About The Project
 
-**The Forgotten House** is a first-person psychological horror escape game built during the IITK Game Development Club Game Jam. The player is trapped inside a haunted house and must complete 8 unique minigames spread across 4 areas — Living Room, Bedroom, Hall, and Yard — to unlock the exit and escape.
+**The Forgotten House** is a first-person psychological horror escape game built during the IITK Game Development Club Game Jam. The player is trapped inside a haunted house and must complete 8 unique minigames spread across 5 areas — Living Room,2 Bedroom, Hall, and Yard — to unlock the exit and escape.
 
 The game features a persistent ghost that hunts the player using the lantern light as a trigger. Every second counts as health drains constantly, and using the lantern — your only tool to interact with the world — also puts you in danger.
 
@@ -54,6 +54,8 @@ The game features a persistent ghost that hunts the player using the lantern lig
 - **Atmospheric Horror** — Dark lighting, fog, ambient audio, and jumpscares
 - **Tripo AI 3D Assets** — Custom horror models generated using AI
 - **Procedural Audio** — Phone call audio generated entirely at runtime in C#
+- **Dynamic Interaction System** — Objects glow and display floating world-space prompts when the player is within range and the lantern is ON. Prompts always face the player camera using the FloatingText system.
+- **Cinematic Escape Ending** — Cinemachine powered camera sequence showing the player escaping the haunted house
 
 
 ---
@@ -101,6 +103,7 @@ This creates a perfect tension loop: you **need** the lantern to progress, but u
 | **Built-In Render Pipeline** | Rendering |
 | **C#** | Programming Language |
 | **Unity NavMesh** | Ghost AI Pathfinding |
+| **Cinemachine** | Cinematic Camera For Escape Ending Sequence |
 | **TextMeshPro** | UI Text Rendering |
 | **Quick Outline** | Object Glow Effects |
 | **Tripo AI** | 3D Model Generation |
@@ -127,7 +130,7 @@ This creates a perfect tension loop: you **need** the lantern to progress, but u
 
 1. **Clone the repository:**
 ```bash
-   git clone https://github.com/[your-repo-link]
+   git clone https://github.com/Praneet4042/TheForgottenHouse
    cd ForgottenHouse
 ```
 
@@ -139,14 +142,17 @@ This creates a perfect tension loop: you **need** the lantern to progress, but u
    - TextMeshPro (Window → TextMeshPro → Import TMP Essential Resources)
    - Quick Outline (Unity Asset Store — free)
 
-4. **Open Main Scene:**
-   - Assets → Scenes → Main scene
+4. **Open Start Scene:**
+   - Assets → Scenes → StartScene
 
 5. **Press Play to test or build:**
+
    - File → Build Settings → Add scenes in order:
-     - Index 0: StartScene
+
+     - Index 0: StartScene  
      - Index 1: Main scene
-     - Index 2: EndScene
+     - Index 2: EndCutScene  
+     - Index 3: EndScene
 
 ---
 
@@ -156,7 +162,7 @@ This creates a perfect tension loop: you **need** the lantern to progress, but u
 ```
 Start Game
     ↓
-Explore the house with lantern OFF (safe but not able to interact)
+Explore the house with lantern OFF (safe but not able to interactand will die when you or ghost collides with each other)
     ↓
 Turn lantern ON to see objects and interact
     ↓
@@ -168,7 +174,7 @@ Turn lantern OFF to avoid ghost
     ↓
 Repeat — complete all 8 tasks
     ↓
-Grab Pills to recover 50% of HP
+Grab Pills to recover 75% of HP
     ↓
 Unlock exit gate and escape!
 ```
@@ -188,13 +194,12 @@ Unlock exit gate and escape!
 
 ### Survival Mechanics
 
-- **Health Drain** — Health decreases constantly at 2 HP/second
+- **Health Drain** — Health decreases constantly at 1 HP/second
 - **Sprint System** — player can only sprint for 3 seconds and there is a cooldown of 7 seconds
-- **Ghost Proximity Drain** — Ghost drains health faster when within 30 units
-- **Kill Radius** — Ghost instantly kills player if within 5 units
-- **Lantern Toggle** — T key turns lantern ON (dangerous) or OFF (safe)
+- **Kill Radius** — Ghost instantly kills player if close
+- **Lantern Toggle** — **X** key turns lantern ON (dangerous) or OFF (safe)
 - **Invincibility** — Health drain pauses during all minigames
-- **Pill Boxes** — Restore 50% health, appear near unlocked doors
+- **Pill Boxes** — Restore 75% health, appear near unlocked doors
 
 ---
 
@@ -206,12 +211,12 @@ Unlock exit gate and escape!
 **Location:** Living Room + Bedroom 1
 **Key:** C to search
 
-The keycard is randomly hidden in one of 6 searchable objects — a bookshelf, dresser, coat rack, chest, closet, and drawer. Objects glow golden when lantern is ON and player is in range. Search wrong objects and receive eerie messages. Find the keycard to complete the task.
+The keycard is randomly hidden in one of 6 searchable objects — a bookshelf, dresser, coat rack, chest, closet, and drawer. Objects glow golden when lantern is ON and player is in range. Search wrong objects and receive weird messages. Find the keycard to complete the task.
 
 **Mechanics:**
 - Random keycard placement every playthrough
 - Golden outline glow on nearby objects (lantern required)
-- Typewriter-style eerie search messages on empty objects
+- weird search messages on empty objects
 - Searched objects permanently disabled
 - Can only hold one keycard search at a time
 - Keycard found message dispaly on screen
@@ -237,7 +242,7 @@ A classic 3-level shell game where a coin is hidden under one of three cups. Wat
 ---
 
 ### 3. 🎭 Scary Maze
-**Location:** Hall / Bedroom 2
+**Location:** Hall 
 **Key:** F to start
 
 A cursor-controlled maze game with 3 increasingly difficult levels. Guide your cursor through the maze without touching the walls.
@@ -255,7 +260,7 @@ A cursor-controlled maze game with 3 increasingly difficult levels. Guide your c
 ---
 
 ### 4. 📞 Spooky Phone Call
-**Location:** Hall
+**Location:** Bedroom 2
 **Key:** F to answer
 
 A ringing telephone plays when player enters range. Answer it to hear a haunting voice giving you a code. Then decode and enter it on the keypad.
@@ -408,7 +413,7 @@ START
 ### Player Health System
 - Constant drain: 1 HP/second via `Time.deltaTime
 - `SetInvincible(bool)` pauses all drain during minigames
-- Health bar with color gradient —  red
+- Health bar with color —  red
 - `TakeDamage(float)` and `Heal(float)` public methods used by all systems
 
 ### World Space Prompts
@@ -431,6 +436,33 @@ START
 - `SetHasKeycard(false)` removed from `Start()` to preserve `Awake()` assignment
 - Random index selection using `Random.Range(0, searchObjects.Length)`
 
+### Interaction Highlight System
+- All interactable objects glow using **Quick Outline**
+- Objects glow only when:
+  - Lantern is ON
+  - Player is within interaction range
+- World space prompts appear using **TextMeshPro**
+- Prompts always face the player camera using `FloatingText.cs`
+- Interaction key standardized to **F** across all minigames
+- Outline and prompt system ensures players can easily identify interactable objects without breaking immersion
+
+### Cinematic Escape Sequence
+- Final escape moment created using **Unity Cinemachine**
+- Triggered after completing all 8 tasks
+- Camera smoothly transitions from player perspective to cinematic shot
+- Shows the player character escaping the haunted house
+- Helps create a narrative conclusion to the gameplay loop
+
+### Interaction Architecture
+- All interactable objects share a unified interaction pattern:
+  - Player enters interaction range
+  - Lantern must be ON
+  - Object outline activates
+  - World prompt appears
+  - Press **F** to interact
+- Interaction handled using distance checks and trigger colliders
+- Prompts dynamically hide when the player moves away
+
 ### Version Control Strategy
 - Unity-specific `.gitignore` to exclude Library and Temp folders
 - Scene independence enforced — only Integration Manager commits to main scene
@@ -444,16 +476,18 @@ All 3D models generated using **Tripo AI** (https://www.tripo3d.ai):
 
 | Asset | Usage in Game |
 |-------|---------------|
-| **Ghost Model** | Main ghost character that chases player |
-| **Horror Doll x8** | 8 collectible dolls in yard |
-| **Dead Trees** | Yard atmosphere decoration |
-| **Vintage Radio**  |Used For StopTheBall Minigame  |
-| **Ouija Board**  |Used For Ouija Board Minigame  |
-| **Rusted Metal Cups** |Used For CupShellGame Minigame  |
-| **Arcade Machine** | Used for Scary Maze Minigame |
-| **Antiqe Telephone** |Used for Spooky Call Minigame  |
-| **Power Transmition Tower** |Used for FuseBox Minigame  |
-| **Rest of the Household Assets** |Bed, Antique Wardrobe, Old Wooden Door Panel, Crates, Port Holder,Clock|
+| **Ghost Model** | Main ghost character that hunts the player |
+| **Player Model** | Main player character that can be seen in animation |
+| **Horror Doll x8** | Collectible dolls used in Doll Bonfire minigame |
+| **Dead Trees** | Environmental decoration for the yard |
+| **Vintage Radio** | Used in Timing Bar minigame |
+| **Ouija Board** | Central prop for Ouija Board minigame |
+| **Rusted Metal Cups** | Used in Cup Shell Game |
+| **Arcade Machine** | Used for Scary Maze minigame |
+| **Antique Telephone** | Used in Spooky Phone Call minigame |
+| **Power Transmission Tower** | Fuse Box puzzle prop |
+| **Haunted Furniture Set** | Bed, wardrobe, doors, crates, cabinets |
+| **Interior Props** | Clock, storage crates, drawers, shelves |
 
 **Import Process:**
 - Exported as FBX or GLB from Tripo AI
@@ -487,6 +521,14 @@ All world space prompts use a LateUpdate-based LookAt system that smoothly faces
 ### Theme Dual Interpretation
 The game interprets both jam themes simultaneously through a single mechanic (the lantern), making the design cohesive and elegant rather than forcing two separate systems to justify the themes.
 
+### Dynamic Interactable Object System
+All interactable objects in the game use a unified **dynamic interaction system**. When the player approaches an object with the lantern turned ON, the object begins to glow using Quick Outline and a world-space prompt appears. The prompt smoothly rotates to face the player camera from any angle using the FloatingText system.
+
+This ensures players can easily identify interactable objects without breaking immersion, while still maintaining the dark and tense atmosphere of the game.
+
+### Cinematic Escape Animation
+The game concludes with a **Cinemachine-driven cinematic sequence** rather than a simple fade-out. When the player unlocks the final exit, the camera transitions into a scripted animation showing the character escaping the haunted house. This cinematic ending adds narrative payoff and elevates the overall production value of the game jam project.
+
 ---
 
 ## ⏳ Timeline
@@ -507,9 +549,9 @@ The game interprets both jam themes simultaneously through a single mechanic (th
 
 | Name | Role |
 |------|------|
-| **Praneet Ayush Lakra** | Integration Manager — Main scene, Ghost AI, Health System, Door System, Keycard Hunt, Doll Bonfire, all script integration, NavMesh, lighting, Assets Generation, Ideation,SoundSFX |
-| **Ayush Kumar** | Timing Bar minigame, Spooky call minigame, Terrain Building, Sound SFX, Sound Manager, Ideation|
-| **Pious Kujur** | Mini Game Ideation, Scary Maze minigame, Ouija Board minigame, ShellGame Minigame, Sound SFX, Sound Manager, Ideation, Main Game Core Ideation |
+| **Praneet Ayush Lakra** | Integration Manager — Main scene, Ghost AI, Health System, Door System, Keycard Hunt,Fuse Box Minigame,Floating text,Interactable objects,Outline effect, Doll Bonfire, all script integration, NavMesh, lighting, Assets Generation from Tripo AI, Ideation,SoundSFX, Level Desingning|
+| **Ayush Kumar** | Timing Bar minigame, Spooky call minigame, Terrain Building,Animation creation using Cinemachine,Sound SFX,Character Movements animation using Maximo,Sound Manager, Ideation,Level Designing,Custom audio creation using mp3 cut audio editor|
+| **Pious Kujur** | Mini Game Ideation, Scary Maze minigame, Ouija Board minigame, ShellGame Minigame, Sound SFX, Sound Manager, Main Game Core Ideation |
 | **Mayank Kapse** | Start Screen, End Screen, Pause Menu, Typewriter Mechanic, SoundSFX, Instruction,  Ideation |
 | **Mayank Agarwal** | Assets Generation from Tripo AI, Ideation |
 
@@ -535,7 +577,7 @@ The game interprets both jam themes simultaneously through a single mechanic (th
 - Ghost audio: sourced from free SFX libraries
 - maze: sourced from free SFX libraries
 - CupShellGame: good/bad outcome sounds from free SFX libraries
-- Used freesound.org
+- Used freesound.org,mp3 audio editor,Audacity
 ---
 
 ## 🙌 Acknowledgments
@@ -545,7 +587,8 @@ The game interprets both jam themes simultaneously through a single mechanic (th
 - **Unity Asset Store** — Assets for main scene
 - **IITK Game Development Club** — Game Jam organization and support
 - **Unity Forums** — Technical support and troubleshooting
-- **TextMeshPro** — Advanced text rendering system
+- **TextMeshPro** — Text rendering system
+- **mp3cut** — Advanced sound mixing
 - **Claude (Anthropic)** — AI assistance during development
 - **ChatGPT (Anthropic)** — AI assistance during development
 
