@@ -3752,9 +3752,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "THE 8 TASKS\r\n\nLIVING ROOM\n  \u25BA Find the hidden keycard among 6
-    objects\r\n  \u25BA Play the cup shell game \u2014 find the coin!\r\nHALL \n 
-    \u25BA Survive the scary maze \u2014 3 levels await\r\n  \u25BA Answer the mysterious
-    phone call and crack the code\r\n\r\n"
+    objects\r\n  \u25BA Play the cup shell game \u2014 find the coin!\r\n\\nHALL
+    \n  \u25BA Survive the scary maze \u2014 3 levels await\r\n  \u25BA Answer the
+    mysterious phone call and crack the code\r\n\r\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3af6bc41632ff304eac13484b36b1267, type: 2}
   m_sharedMaterial: {fileID: -5479742775250729056, guid: 3af6bc41632ff304eac13484b36b1267, type: 2}

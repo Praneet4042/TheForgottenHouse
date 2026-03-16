@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class MinigameManager : MonoBehaviour
 {
+    public bool isMinigameActive = false;
     public static MinigameManager Instance { get; private set; }
 
     void Awake()
@@ -12,8 +13,9 @@ public class MinigameManager : MonoBehaviour
 
     public void StartMinigame(GameObject panel, bool showCursor = true)
     {
-        if (panel != null) panel.SetActive(true);
+        isMinigameActive = true;
 
+        if (panel != null) panel.SetActive(true);
         Cursor.lockState = showCursor ?
             CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = showCursor;
@@ -24,7 +26,6 @@ public class MinigameManager : MonoBehaviour
         if (PlayerHealth.instance != null)
             PlayerHealth.instance.SetInvincible(true);
 
-        // NEW — stop ghost AI
         GhostAI ghost = FindObjectOfType<GhostAI>();
         if (ghost != null)
             ghost.SetActive(false);
@@ -32,8 +33,9 @@ public class MinigameManager : MonoBehaviour
 
     public void EndMinigame(GameObject panel)
     {
-        if (panel != null) panel.SetActive(false);
+        isMinigameActive = false;
 
+        if (panel != null) panel.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -43,7 +45,6 @@ public class MinigameManager : MonoBehaviour
         if (PlayerHealth.instance != null)
             PlayerHealth.instance.SetInvincible(false);
 
-        // NEW — reactivate ghost
         GhostAI ghost = FindObjectOfType<GhostAI>();
         if (ghost != null)
             ghost.SetActive(true);

@@ -17,12 +17,12 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
+        if (MinigameManager.Instance != null &&
+            MinigameManager.Instance.isMinigameActive)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (MinigameManager.Instance != null &&
-                Cursor.lockState == CursorLockMode.None)
-                return;
-
             if (isPaused)
                 Resume();
             else
