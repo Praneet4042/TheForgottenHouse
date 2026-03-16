@@ -170,9 +170,18 @@ Ghost immediately starts chasing
     ↓
 Complete minigame to proceed to next stage
     ↓
+"ONE MORE CHANCE..."
+    ↓
+Respawn at the Respawn Point
+    ↓
+Health restored to 100%
+Lantern automatically turned OFF
+    ↓
+All previously remain task remain completed
+    ↓
 Turn lantern OFF to avoid ghost
     ↓
-Repeat — complete all 8 tasks
+complete all 8 tasks
     ↓
 Grab Pills to recover 75% of HP
     ↓
@@ -193,6 +202,7 @@ Unlock exit gate and escape!
 | **ESC** | Pause Menu |
 
 ### Survival Mechanics
+- **Respawn Point added** - Player respawn once and remaining tasks gets completed.
 
 - **Health Drain** — Health decreases constantly at 1 HP/second
 - **Sprint System** — player can only sprint for 3 seconds and there is a cooldown of 7 seconds

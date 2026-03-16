@@ -52,6 +52,7 @@ public class PlayerHealth : MonoBehaviour
             if (currentHealth <= 0) Die("You ran out of time...");
         }
     }
+    
     void UpdateHealthBar()
     {
         if (healthBar != null)
@@ -86,5 +87,11 @@ public class PlayerHealth : MonoBehaviour
     {
         if (dead) return;
         Die(msg);
+    }
+    public void ResetPlayer()
+    {
+        dead = false;
+        currentHealth = maxHealth;
+        UpdateHealthBar();
     }
 }
