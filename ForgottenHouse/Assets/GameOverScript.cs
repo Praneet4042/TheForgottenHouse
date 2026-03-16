@@ -11,6 +11,6 @@ public class GameOverScript : MonoBehaviour
     public void QuitToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("TitleScene");
     }
 }

@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PauseManager : MonoBehaviour
 {
+    public Button firstSelectedButton;
     public GameObject pauseCanvas;
     public GameObject pausePanel;
 
@@ -14,6 +17,10 @@ public class PauseManager : MonoBehaviour
 
     void Update()
     {
+        if (MinigameManager.Instance != null &&
+            MinigameManager.Instance.isMinigameActive)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused)
@@ -26,15 +33,22 @@ public class PauseManager : MonoBehaviour
     public void Pause()
     {
         Time.timeScale = 0f;
+
         pauseCanvas.SetActive(true);
         pausePanel.SetActive(true);
+
         objectives1.SetActive(false);
         objectives2.SetActive(false);
         objectives3.SetActive(false);
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
         isPaused = true;
 
+        // FIX: force UI selection
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstSelectedButton.gameObject);
     }
 
     public void Resume()

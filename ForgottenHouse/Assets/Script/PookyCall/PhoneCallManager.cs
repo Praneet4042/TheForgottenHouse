@@ -150,9 +150,9 @@ public class PhoneCallManager : MonoBehaviour
         if (subtitleText) subtitleText.text = "";
 
         // Unfreeze player via MinigameManager
-        MinigameManager.Instance.EndMinigame(callOverlayUI);
+        MinigameManager.Instance.StartMinigame(keypadUI, true);
 
-        if (keypadUI) keypadUI.SetActive(true);
+        
         if (keypadManager) keypadManager.OpenKeypad();
     }
 
